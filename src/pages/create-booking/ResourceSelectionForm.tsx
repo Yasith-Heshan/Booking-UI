@@ -106,9 +106,10 @@ export default function ResourceSelectionForm(
     }
   };
 
-  const checkAvailability = async (date: any) => {
+  const checkAvailability = async (date: any=dayjs()) => {
     setFlagForBookingDate(true);
     setLoader(true);
+    console.log(date,props.formik.values.ResourceName);
     if (props.formik.values.ResourceName && date) {
       props.formik.values.bookingDate = date;
       const resourceId = resources.find(
@@ -158,7 +159,10 @@ export default function ResourceSelectionForm(
             variant="standard"
             select
             value={props.formik.values.ResourceName}
-            onChange={props.formik.handleChange}
+            onChange={async (value) => {
+              props.formik.setFieldValue("ResourceName", value.target.value);
+              await checkAvailability(props.formik.errors.bookingDate);
+            }}
             error={
               props.formik.touched.ResourceName &&
               Boolean(props.formik.errors.ResourceName)
